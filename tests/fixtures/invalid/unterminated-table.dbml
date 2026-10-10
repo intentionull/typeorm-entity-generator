@@ -1,0 +1,2 @@
+Table accounts {
+  id integer [pk]

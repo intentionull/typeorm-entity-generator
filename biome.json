@@ -1,0 +1,37 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**", "!dist/**", "!tests/fixtures/**", "!package-lock.json"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "none",
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnreachable": "error",
+        "noInvalidBuiltinInstantiation": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noDoubleEquals": "error",
+        "noDuplicateObjectKeys": "error",
+        "noDebugger": "error"
+      }
+    }
+  },
+  "assist": { "enabled": false }
+}

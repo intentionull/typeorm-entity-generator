@@ -1,0 +1,14 @@
+Project quoted {
+  database_type: 'PostgreSQL'
+}
+
+Table "Sales Team"."Member Record" {
+  "Member Id" integer [pk]
+  "Manager Id" integer
+  "Display Name" varchar(80) [not null]
+  indexes {
+    "Manager Id" [name: 'Member Manager Index', type: btree]
+  }
+}
+
+Ref: "Sales Team"."Member Record"."Manager Id" > "Sales Team"."Member Record"."Member Id"

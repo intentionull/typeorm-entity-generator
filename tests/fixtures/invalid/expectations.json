@@ -1,0 +1,18 @@
+[
+  {
+    "file": "missing-column.dbml",
+    "message": "Column 'missing_id' does not exist"
+  },
+  {
+    "file": "duplicate-table.dbml",
+    "message": "Table 'accounts' already exists in schema 'public'"
+  },
+  {
+    "file": "reference-arity.dbml",
+    "message": "Unequal fields in ref endpoints"
+  },
+  {
+    "file": "unterminated-table.dbml",
+    "message": "Expect a closing brace"
+  }
+]
