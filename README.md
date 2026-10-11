@@ -2,7 +2,7 @@
 
 Generate TypeORM entity files from database schemas, preserving names, column types, keys, and relationships.
 
-**Status:** development tooling, parser fixtures, an internal PostgreSQL normalization adapter, and pure entity/column naming with declarative overrides are implemented. Entity generation, the public library API, and CLI are not implemented; the package remains private and unpublished. Generation commands below describe the proposed interface, not commands that work today.
+**Status:** development tooling, parser fixtures, internal PostgreSQL SQL and direct DBML normalization adapters, and pure entity/column naming with declarative overrides are implemented for their documented subsets. Entity generation, the public library API, and CLI are not implemented; the package remains private and unpublished. Generation commands below describe the proposed interface, not commands that work today.
 
 ## Fixture checks
 
@@ -19,7 +19,7 @@ The [CI workflow](.github/workflows/ci.yml) runs on pushes, pull requests, and m
 
 ## Repository checks
 
-Run `npm run check` for the complete contributor gate. See the [toolchain guide](docs/toolchain.md) for exact versions, commands, and license boundaries, the [PostgreSQL support table](docs/postgres-normalization.md) for the implemented subset, and the [naming guide](docs/naming.md) for default conversion, overrides, collision diagnostics, and tests.
+Run `npm run check` for the complete contributor gate. See the [toolchain guide](docs/toolchain.md) for exact versions, commands, and license boundaries, the [PostgreSQL support table](docs/postgres-normalization.md) and [DBML support table](docs/dbml-normalization.md) for implemented subsets, and the [naming guide](docs/naming.md) for default conversion, overrides, collision diagnostics, and tests.
 
 `npm run check:docs` needs no installed dependencies and never edits files. It checks local Markdown links, code-fence balance, and restricted terminology in repository text and filenames. Required legal notices are exempt; pinned upstream source stays unchanged. See the [check guide](docs/documentation-check.md) for syntax coverage, exclusions, and limitations. This static check does not prove documentation accuracy or execute examples.
 

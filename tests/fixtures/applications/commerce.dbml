@@ -1,0 +1,78 @@
+Project commerce { database_type: 'PostgreSQL' }
+
+Enum shop.order_state {
+  draft
+  placed
+  shipped
+  cancelled
+}
+
+Table shop.customers {
+  id uuid [pk]
+  email varchar(254) [not null, unique]
+  name text [not null]
+  active boolean [not null, default: true]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table shop.addresses {
+  id uuid [pk]
+  customer_id uuid [not null]
+  street text [not null]
+  postcode varchar(16) [not null]
+  country char(2) [not null, default: 'US']
+}
+
+Table shop.products {
+  id uuid [pk]
+  sku varchar(40) [not null, unique]
+  title text [not null]
+  price numeric(12,2) [not null, default: 0]
+  attributes jsonb [default: '{}']
+}
+
+Table shop.orders {
+  id uuid [pk]
+  customer_id uuid [not null]
+  address_id uuid
+  state shop.order_state [not null, default: 'draft']
+  total numeric(18,2) [not null, default: 0]
+  created_at timestamptz(3) [not null, default: `now()`]
+  indexes {
+    (customer_id, created_at) [name: 'orders_customer_time', type: btree]
+  }
+}
+
+Table shop.order_items {
+  order_id uuid [not null]
+  product_id uuid [not null]
+  line_no int [not null]
+  quantity int [not null, default: 1]
+  unit_price numeric(12,2) [not null]
+  indexes {
+    (order_id, line_no) [pk, name: 'order_items_pk']
+    (order_id, product_id) [unique, name: 'order_items_product_key']
+  }
+}
+
+Table shop.payment_records {
+  id uuid [pk]
+  order_id uuid [not null]
+  reference varchar(64) [not null, unique]
+  amount numeric(18,2) [not null]
+}
+
+Table shop.shipments {
+  id uuid [pk]
+  order_id uuid [not null, unique]
+  shipped_at timestamptz
+  tracking varchar(80)
+}
+
+Ref address_customer: shop.addresses.customer_id > shop.customers.id [delete: cascade]
+Ref order_customer: shop.orders.customer_id > shop.customers.id [delete: restrict]
+Ref order_address: shop.orders.address_id > shop.addresses.id [delete: set null]
+Ref item_order: shop.order_items.order_id > shop.orders.id [delete: cascade]
+Ref item_product: shop.order_items.product_id > shop.products.id [delete: restrict]
+Ref payment_order: shop.payment_records.order_id > shop.orders.id [delete: restrict]
+Ref shipment_order: shop.orders.id - shop.shipments.order_id [delete: cascade]

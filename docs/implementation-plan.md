@@ -1,8 +1,8 @@
 # Implementation plan
 
-**Status:** approved implementation order; M0 tooling and M1 internal PostgreSQL normalization, scalar/entity naming, and declarative naming overrides are implemented for their documented subsets. Direct DBML normalization and entity generation remain pending. This is a maintainer-facing plan kept in the public repository, not a claim of completed generator support. It belongs outside the npm package allowlist.
+**Status:** approved implementation order; M0 tooling, M1 internal PostgreSQL normalization and scalar/entity naming with declarative overrides, and M2 direct DBML normalization are implemented for their documented subsets. Entity generation remains pending. Implementation and local validation do not replace maintainer milestone acceptance. This is a maintainer-facing plan kept in the public repository, not a claim of completed generator support. It belongs outside the npm package allowlist.
 
-The current repository contains strict TypeScript/ESM tooling, compiled `node:test` tests, Biome formatting/focused lint, an initial license-metadata inventory, the tested [documentation/vocabulary check](documentation-check.md), and a read-only [Node 24/26 CI workflow](../.github/workflows/ci.yml). The private package remains locked and unpublished. CI runs clean, engine-strict, script-disabled installs and `npm run check`; see the [toolchain guide](toolchain.md). The [fixture corpus](../tests/fixtures/README.md) preserves pinned upstream DBML, independent SQL/DBML pairs, and negative inputs. The internal [PostgreSQL adapter](postgres-normalization.md) normalizes a tested subset without executing SQL; the [naming layer](naming.md) resolves classes, scalar properties, and basenames without changing database semantics. There is no direct DBML normalizer, entity emitter, public library API, CLI, or published package. This is not completed generator support or completion of M2.
+The current repository contains strict TypeScript/ESM tooling, compiled `node:test` tests, Biome formatting/focused lint, an initial license-metadata inventory, the tested [documentation/vocabulary check](documentation-check.md), and a read-only [Node 24/26 CI workflow](../.github/workflows/ci.yml). The private package remains locked and unpublished. CI runs clean, engine-strict, script-disabled installs and `npm run check`; see the [toolchain guide](toolchain.md). The [fixture corpus](../tests/fixtures/README.md) preserves pinned upstream DBML, independent SQL/DBML pairs, and negative inputs. The internal [PostgreSQL adapter](postgres-normalization.md) and [direct DBML adapter](dbml-normalization.md) normalize tested subsets without executing SQL or connecting to databases; the [naming layer](naming.md) resolves classes, scalar properties, and basenames without changing database semantics. There is no entity emitter, public library API, CLI, or published package. This is not completed generator support.
 
 ## Recommendation and boundaries
 
@@ -148,6 +148,8 @@ Acceptance:
 
 ### M2 — DBML normalization and fidelity rules
 
+**Implemented subset:** [DBML normalization](dbml-normalization.md), with independent [semantic regressions](../tests/dbml.test.ts) and SQL/DBML physical-schema comparisons. Parser-only upstream fixtures are not normalization compatibility claims.
+
 **Owner:** adapter implementation owner. **Depends on:** M1. **Release requirement:** yes.
 
 Deliver:
@@ -161,6 +163,7 @@ Acceptance:
 - Equivalent SQL and DBML fixtures produce matching physical schema facts for their common supported subset.
 - Composite references, one-to-one qualification, self-references, and missing targets have independent positive/negative cases.
 - Known SQL-to-DBML fidelity losses remain regression cases; the implementation never uses that lossy conversion as its shared model.
+- Keep the [coverage matrix](dbml-coverage.md) aligned with the supported profile. Application fixtures use complete handwritten physical-schema oracles; fixed-seed failures retain reproducible inputs, and unsupported forms have explicit rejection assertions. This is normalization evidence, not end-to-end compatibility or automatic milestone acceptance.
 
 ### M3 — TypeORM emission and PostgreSQL proof
 
@@ -178,6 +181,8 @@ Acceptance:
 - Generated projects compile with strict settings and execute under the declared module format. Check public/consumer types without hiding defects behind `skipLibCheck`.
 - Runtime metadata matches independently specified facts. Test composite keys, cycles, multiple foreign keys to one target, and nullable relations; eager/lazy loading and persistence cascades stay off by default.
 - Run controlled database comparisons for every accepted fidelity feature. Fixture setup may execute repository-controlled SQL only in disposable test databases; the generator never executes input SQL.
+- Use the five DBML application fixtures as strict generated-consumer and metadata cases, not only snapshots. Compare source and generated PostgreSQL catalog facts for names, types/modifiers, nullability, defaults, keys, indexes and references, including nullable composite/circular/cross-schema relationships. Isolate source/generated schemas or databases and clean them between tests; document every permitted externally managed exclusion.
+- Keep NestJS consumer/persistence proof in M5 and native Aurora/Data API evidence in their separate gates. Successful local PostgreSQL or constructor tests cannot substitute for transport/cloud verification.
 - Repeated conversions produce identical file paths and bytes with no timestamps or absolute paths. Golden files are secondary proof, not the semantic oracle.
 
 ### M4 — CLI and safe output

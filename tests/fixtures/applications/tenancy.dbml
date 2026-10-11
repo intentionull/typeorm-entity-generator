@@ -1,0 +1,63 @@
+Project tenancy { database_type: 'PostgreSQL' }
+
+Enum tenant.membership_state {
+  active
+  invited
+  disabled
+}
+
+Table tenant.tenants {
+  id uuid [pk]
+  slug varchar(64) [not null, unique]
+}
+
+Table tenant.users {
+  id uuid [pk]
+  email varchar(254) [not null, unique]
+}
+
+Table tenant.memberships {
+  tenant_id uuid [pk]
+  user_id uuid [pk]
+  state tenant.membership_state [not null, default: 'invited']
+}
+
+Table tenant.projects {
+  tenant_id uuid [pk]
+  id uuid [pk]
+  owner_id uuid
+  name text [not null]
+  code varchar(32) [not null]
+  indexes {
+    (tenant_id, code) [unique, name: 'projects_tenant_code']
+  }
+}
+
+Table tenant.tasks {
+  tenant_id uuid [pk]
+  id uuid [pk]
+  project_id uuid [not null]
+  assignee_id uuid
+  title text [not null]
+  done boolean [not null, default: false]
+  indexes {
+    (tenant_id, project_id) [name: 'tasks_project', type: btree]
+  }
+}
+
+Table tenant.comments {
+  tenant_id uuid [pk]
+  id uuid [pk]
+  task_id uuid [not null]
+  author_id uuid [not null]
+  body text [not null]
+}
+
+Ref membership_tenant: tenant.memberships.tenant_id > tenant.tenants.id [delete: cascade]
+Ref membership_user: tenant.memberships.user_id > tenant.users.id [delete: cascade]
+Ref project_tenant: tenant.projects.tenant_id > tenant.tenants.id [delete: cascade]
+Ref project_owner: tenant.projects.(tenant_id, owner_id) > tenant.memberships.(tenant_id, user_id)
+Ref task_project: tenant.tasks.(tenant_id, project_id) > tenant.projects.(tenant_id, id) [delete: cascade]
+Ref task_assignee: tenant.tasks.(tenant_id, assignee_id) > tenant.memberships.(tenant_id, user_id)
+Ref comment_task: tenant.comments.(tenant_id, task_id) > tenant.tasks.(tenant_id, id) [delete: cascade]
+Ref comment_author: tenant.comments.(tenant_id, author_id) > tenant.memberships.(tenant_id, user_id)

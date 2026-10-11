@@ -33,6 +33,10 @@ implemented PostgreSQL normalizer parses a bounded SQL subset without executing
 SQL or opening database connections. Limits and unsupported semantics are
 documented in [PostgreSQL normalization](docs/postgres-normalization.md).
 
+The direct DBML normalizer also uses bounded input and returns structured errors
+without exporting SQL or executing source. Its limits and unsupported physical
+features are documented in [DBML normalization](docs/dbml-normalization.md).
+
 Entity emission, filesystem output, the public library API, and the CLI are not
 implemented yet. Their planned safeguards are not current security guarantees.
 See the [project status](README.md) and [implementation plan](docs/implementation-plan.md)

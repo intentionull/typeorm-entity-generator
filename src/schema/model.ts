@@ -97,3 +97,11 @@ export interface PostgresOptions {
   /** Statements, namespaces, types, tables, columns, constraints and indexes. Default 10,000. */
   maxObjects?: number;
 }
+
+export interface DbmlOptions {
+  target: 'postgres';
+  /** Default 1 MiB; at most 8 MiB. */
+  maxInputBytes?: number;
+  /** Namespaces, enums and labels, tables, columns, keys, indexes and references. Default 10,000. */
+  maxObjects?: number;
+}

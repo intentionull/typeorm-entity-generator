@@ -1,0 +1,7 @@
+Project fixture { database_type: 'PostgreSQL' }
+Table parents { a int [pk]
+  b int [pk] }
+Table children { parent_a int
+  parent_b int }
+Ref relation: children.(parent_a, parent_b) > parents.(a, b)
+  [delete: no action, update: no action]

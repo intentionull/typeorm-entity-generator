@@ -100,6 +100,8 @@ A dump import profile may normalize known inert directives in a syntax-aware pre
 
 Use `@dbml/core` with `dbmlv2`. Map its parsed database object directly into the schema contract. Validate type names, defaults, enum references, indexes, checks, and composite relationships against the selected target dialect.
 
+The implemented [direct DBML subset](dbml-normalization.md) validates raw v2 compiler data behind a narrow runtime boundary. It recovers exact numeric defaults from source, rejects ambiguous generation and unsupported physical semantics, and returns no partial schema on failure. Checks remain unsupported; parser acceptance does not establish physical fidelity.
+
 Treat DBML `Ref` declarations as foreign key intent and preserve their direction and composite column pairs. Validate the qualifying uniqueness needed for a one-to-one relation. A conceptual many-to-many reference without an explicit junction table needs a declared mapping policy; do not silently invent a physical table or extra constraints.
 
 Ignore project/table/column notes by default. Any future note-to-comment export must honor the repository vocabulary rules and report excluded content. Notes are not executable configuration.

@@ -4,7 +4,7 @@
 
 Build a deterministic TypeORM entity generator with a command-line interface and a typed library API. Keep parser evaluation, implemented features, and planned features clearly separated in documentation.
 
-Follow the [implementation plan](docs/implementation-plan.md) for milestone order and acceptance criteria. The [fixture corpus guide](tests/fixtures/README.md) documents parser checks and provenance. Strict TypeScript/ESM tooling, formatting/lint, documentation and license-metadata checks, and compiled PostgreSQL normalization tests are implemented. Entity generation remains pending. See the [toolchain guide](docs/toolchain.md) for exact versions, commands, and license boundaries.
+Follow the [implementation plan](docs/implementation-plan.md) for milestone order and acceptance criteria. The [fixture corpus guide](tests/fixtures/README.md) documents parser checks and provenance. Strict TypeScript/ESM tooling, formatting/lint, documentation and license-metadata checks, and compiled PostgreSQL SQL/DBML normalization and naming tests are implemented. Entity generation remains pending. See the [toolchain guide](docs/toolchain.md) for exact versions, commands, and license boundaries.
 
 ## Continuous integration
 
@@ -52,6 +52,7 @@ Run `npm run check:docs` for the dependency-free, read-only repository scan, or 
 - Write a failing behavior test before changing implemented behavior. Test observable schema semantics, diagnostics, and output safety rather than private helper structure.
 - Use independent schema fixtures, compilation checks, and database metadata comparisons. Snapshots alone are insufficient.
 - Use `npm run test:postgres` for compiled normalization tests. Read the [PostgreSQL support table](docs/postgres-normalization.md) before extending the adapter; grammar acceptance is not supported semantics.
+- Use `npm run test:dbml` for direct DBML normalization tests. Read the [DBML support table](docs/dbml-normalization.md); preserve exact numeric defaults, reference direction, and explicit uniqueness without SQL export or invented physical constraints.
 - Use `npm run test:names` for compiled naming/override tests. Read the [naming rules](docs/naming.md) before changing conversion or collision behavior; keep generated mappings separate from physical schema facts.
 - Keep ordering, file names, and output bytes deterministic. Do not embed timestamps or machine-specific paths.
 - Keep changes focused; do not add a new input adapter until its supported subset and failure behavior are tested.
