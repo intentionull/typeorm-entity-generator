@@ -19,7 +19,7 @@ Dependencies and direct tool versions are locked. Lifecycle scripts stay disable
 | Node types | 24.19.2 | Node 24 development API declarations | MIT |
 | Biome | 2.5.15 | One formatter and focused lint configuration | MIT OR Apache-2.0 |
 | PostgreSQL parser | 18.1.5 | Internal syntax adapter and fixtures | MIT |
-| DBML parser | 10.3.1 | Parser fixtures; normalization still pending | Apache-2.0 |
+| DBML parser | 10.3.1 | Parser fixtures and bounded direct normalization | Apache-2.0 |
 
 The compiler uses strict NodeNext ESM resolution, explicit `.js` imports, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, declarations, and source maps. `skipLibCheck` is false. Source and TypeScript tests compile into `dist/`; failed compilation does not emit. The TypeScript CLI is used rather than its legacy compiler API.
 
@@ -33,6 +33,7 @@ Biome applies two-space indentation, single quotes, and 100-column formatting to
 | `npm test` | Clean/build TypeScript, then run existing `.mjs` tests and compiled TypeScript tests |
 | `npm run test:postgres` | Clean/build and run only PostgreSQL normalization tests |
 | `npm run test:names` | Clean/build and run only entity/column naming and override tests |
+| `npm run test:dbml` | Clean/build and run only direct DBML normalization and SQL/DBML equivalence tests |
 | `npm run test:fixtures` | Parser fixture/hash tests without a build |
 | `npm run test:docs` | Documentation checker regression tests without a build |
 | `npm run test:tooling` | Cleanup and license-inventory regression tests without a build |

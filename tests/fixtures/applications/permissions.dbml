@@ -1,0 +1,48 @@
+Project permissions { database_type: 'PostgreSQL' }
+
+Table auth.users {
+  id uuid [pk]
+  username varchar(64) [not null, unique]
+  manager_id uuid
+}
+
+Table auth.roles {
+  id int [pk]
+  code varchar(32) [not null, unique]
+}
+
+Table auth.permissions {
+  id int [pk]
+  code varchar(80) [not null, unique]
+}
+
+Table auth.user_roles {
+  user_id uuid [pk]
+  role_id int [pk]
+  granted_at timestamp [not null, default: `now()`]
+}
+
+Table auth.role_permissions {
+  role_id int [pk]
+  permission_id int [pk]
+}
+
+Table auth.groups {
+  id uuid [pk]
+  parent_id uuid
+  name text [not null]
+}
+
+Table auth.group_members {
+  group_id uuid [pk]
+  user_id uuid [pk]
+}
+
+Ref user_manager: auth.users.manager_id > auth.users.id [delete: set null]
+Ref user_role_user: auth.user_roles.user_id > auth.users.id [delete: cascade]
+Ref user_role_role: auth.user_roles.role_id > auth.roles.id [delete: cascade]
+Ref role_permission_role: auth.role_permissions.role_id > auth.roles.id [delete: cascade]
+Ref role_permission_permission: auth.role_permissions.permission_id > auth.permissions.id [delete: cascade]
+Ref group_parent: auth.groups.parent_id > auth.groups.id [delete: set null]
+Ref group_member_group: auth.group_members.group_id > auth.groups.id [delete: cascade]
+Ref group_member_user: auth.group_members.user_id > auth.users.id [delete: cascade]

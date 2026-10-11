@@ -1,0 +1,72 @@
+Project scheduling { database_type: 'PostgreSQL' }
+
+Enum calendar.attendance_state {
+  pending
+  accepted
+  declined
+}
+
+Table calendar.resources {
+  id uuid [pk]
+  name text [not null]
+  time_zone varchar(64) [not null, default: 'UTC']
+}
+
+Table calendar.attendees {
+  id uuid [pk]
+  email varchar(254) [not null, unique]
+}
+
+Table calendar.calendars {
+  id uuid [pk]
+  owner_id uuid [not null]
+  name text [not null]
+}
+
+Table calendar.events {
+  id uuid [pk]
+  calendar_id uuid [not null]
+  resource_id uuid
+  title text [not null]
+  event_date date [not null]
+  start_time time(3) [not null]
+  offset_time timetz(6)
+  starts_at timestamptz(6) [not null]
+  duration_minutes smallint [not null, default: 30]
+  previous_event_id uuid
+}
+
+Table calendar.reservations {
+  resource_id uuid [pk]
+  event_id uuid [pk]
+  slot int [pk]
+  indexes {
+    (event_id, slot) [unique, name: 'reservation_event_slot']
+  }
+}
+
+Table calendar.event_attendees {
+  event_id uuid [pk]
+  attendee_id uuid [pk]
+  state calendar.attendance_state [not null, default: 'pending']
+}
+
+Table calendar.reminders {
+  id uuid [pk]
+  event_id uuid [not null]
+  attendee_id uuid
+  delivery_at timestamptz(6) [not null]
+  sent boolean [not null, default: false]
+  payload bytea
+}
+
+Ref calendar_owner: calendar.calendars.owner_id > calendar.attendees.id [delete: restrict]
+Ref event_calendar: calendar.events.calendar_id > calendar.calendars.id [delete: cascade]
+Ref event_resource: calendar.events.resource_id > calendar.resources.id [delete: set null]
+Ref event_previous: calendar.events.previous_event_id > calendar.events.id [delete: set null]
+Ref reservation_resource: calendar.reservations.resource_id > calendar.resources.id [delete: cascade]
+Ref reservation_event: calendar.reservations.event_id > calendar.events.id [delete: cascade]
+Ref attendance_event: calendar.event_attendees.event_id > calendar.events.id [delete: cascade]
+Ref attendance_attendee: calendar.event_attendees.attendee_id > calendar.attendees.id [delete: cascade]
+Ref reminder_event: calendar.reminders.event_id > calendar.events.id [delete: cascade]
+Ref reminder_attendee: calendar.reminders.attendee_id > calendar.attendees.id [delete: set null]

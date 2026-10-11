@@ -29,7 +29,13 @@ These are parser-fixture results, not generator, TypeORM, NestJS, database, or c
 
 The private development manifest and lockfile pin `@dbml/core@10.3.1` and `libpg-query@18.1.5`. The DBML checks use `dbmlv2`. Changing the parsers requires reviewing diagnostic changes and schema facts, not automatically refreshing expectations.
 
-The [CI workflow](../../.github/workflows/ci.yml) runs this suite on Node 24 and 26 using clean, engine-strict installs with dependency lifecycle scripts disabled. The repository does not yet implement a generator, a CLI, a public library API, or the full TypeScript toolchain. These checks establish corpus integrity and selected parser semantics only, not generated-project or database compatibility.
+The [CI workflow](../../.github/workflows/ci.yml) runs this suite on Node 24 and 26 using clean, engine-strict installs with dependency lifecycle scripts disabled. Strict TypeScript tooling and separate compiled PostgreSQL SQL/DBML normalization and naming tests are implemented. The repository does not yet implement entity emission, a CLI, or a public library API. These corpus checks establish integrity and selected parser semantics only, not adapter acceptance, generated-project, or database compatibility. See the [DBML support table](../../docs/dbml-normalization.md) for normalization boundaries.
+
+## Normalization applications and regressions
+
+Five [locally authored MIT application examples](applications/) cover commerce, tenancy, permissions, content, and scheduling. They are representative schemas, not copied application dumps or adaptations of the upstream corpus. [Complete handwritten physical facts](../dbml-application-expectations.ts) and [application tests](../dbml-applications.test.ts) provide the semantic oracle; helpers construct expected contract objects and parse no source. No snapshot is copied from adapter output.
+
+[Reduced regression inputs](regressions/README.md) retain parser failures with their expected rejections and origins. The [coverage matrix](../../docs/dbml-coverage.md) distinguishes parser/provenance tests, cross-adapter equality, complete application oracles, deterministic generated cases, exact boundaries, and pending emission/catalog proof. `npm run test:dbml` runs every DBML semantic suite; `npm run check` includes the parser/provenance suite too. Leave all pinned upstream bytes and attribution unchanged when adding local cases.
 
 ## Upstream DBML
 
@@ -63,15 +69,15 @@ The pair files are authored here under the repository's MIT license; neither for
 
 The assertions live in [fixtures.test.mjs](../fixtures.test.mjs). Expected facts are literal, independently reviewed assertions, not exporter snapshots. The test helpers read parser structures; they are not production input adapters or a substitute for the versioned schema contract.
 
-These pairs cover selected shared facts, not a proof of full semantic equivalence. In particular, DBML does not specify every SQL constraint name or constraint option. Once the adapters exist, feed the same pairs through them and compare their normalized schema output to independent expectations. Database catalog and TypeORM compilation/metadata checks remain later milestones.
+These pairs cover selected shared facts, not a proof of full semantic equivalence. In particular, DBML does not specify every SQL constraint name or constraint option. The [compiled DBML tests](../dbml.test.ts) compare the normalized pair outputs, while the application tests above compare complete physical schemas against handwritten expectations. Database catalog and TypeORM compilation/metadata checks remain later milestones.
 
-Two parser representations need explicit handling in future adapters: DBML boolean defaults retain a boolean type tag but store the value as text (`'true'`); the PostgreSQL parser retains an integer constant node for zero but omits its numeric value. The assertions check these representations without confusing boolean defaults with string defaults or zero with a missing default.
+Two parser representations receive explicit handling in the adapters: DBML boolean defaults retain a boolean type tag but store the value as text (`'true'`); the PostgreSQL parser retains an integer constant node for zero but omits its numeric value. The parser and normalization assertions check these representations without confusing boolean defaults with string defaults or zero with a missing default.
 
 ## Invalid local inputs
 
 Four small DBML fixtures isolate missing columns, duplicate tables, unequal reference arity, and an unterminated table. [invalid/expectations.json](invalid/expectations.json) specifies the intended parser diagnostic for each case. A generic thrown exception is not enough to pass.
 
-Later adapter tests must separately cover unknown target types, non-unique reference targets, ambiguous relationships, unsupported schema features, and naming collisions. Those are not all DBML syntax errors.
+The compiled normalization suites separately cover unknown target types, non-unique reference targets, ambiguous relationships, unsupported schema features, and naming collisions. Those are not all DBML syntax errors; see the [coverage matrix](../../docs/dbml-coverage.md) for the diagnostic boundaries.
 
 ## Adding or updating a fixture
 

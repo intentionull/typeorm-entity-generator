@@ -661,6 +661,13 @@ export async function normalizePostgres(
       'SQL_OPTIONS',
       'SQL must contain well-formed Unicode and no NUL bytes; these can change or truncate parser input.',
     );
+  // The pinned scanner/parser reject zero-length input rather than returning an empty tree.
+  if (sql.length === 0)
+    return {
+      ok: true,
+      schema: { version: 1, dialect: 'postgres', namespaces: ['public'], tables: [], enums: [] },
+      diagnostics: [],
+    };
   let interpreter: Interpreter | undefined;
   try {
     const scanned = await scan(sql);

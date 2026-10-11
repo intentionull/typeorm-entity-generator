@@ -1,0 +1,64 @@
+Project content { database_type: 'PostgreSQL' }
+
+Table identity.accounts as account {
+  id uuid [pk]
+  handle varchar(64) [not null, unique]
+}
+
+Enum content.publication_state {
+  draft
+  published
+  archived
+}
+
+Table content.authors {
+  id uuid [pk]
+  account_id uuid [not null, unique]
+  display_name text [not null]
+}
+
+Table content.posts {
+  id uuid [pk]
+  author_id uuid [not null]
+  featured_revision_id uuid
+  slug varchar(120) [not null, unique]
+  state content.publication_state [not null, default: 'draft']
+  body text
+}
+
+Table content.revisions {
+  id uuid [pk]
+  post_id uuid [not null]
+  editor_id uuid [not null]
+  body text [not null]
+  created_at timestamp(6) [not null, default: `now()`]
+}
+
+Table content.tags {
+  id int [pk]
+  name varchar(40) [not null, unique]
+}
+
+Table content.post_tags {
+  post_id uuid [pk]
+  tag_id int [pk]
+}
+
+Table content.comments {
+  id uuid [pk]
+  post_id uuid [not null]
+  author_id uuid
+  parent_id uuid
+  body text [not null]
+}
+
+Ref author_account: account.id - content.authors.account_id [delete: cascade]
+Ref post_author: content.posts.author_id > content.authors.id [delete: restrict]
+Ref post_featured_revision: content.posts.featured_revision_id > content.revisions.id [delete: set null]
+Ref revision_post: content.revisions.post_id > content.posts.id [delete: cascade]
+Ref revision_editor: content.revisions.editor_id > content.authors.id [delete: restrict]
+Ref post_tag_post: content.post_tags.post_id > content.posts.id [delete: cascade]
+Ref post_tag_tag: content.post_tags.tag_id > content.tags.id [delete: cascade]
+Ref comment_post: content.comments.post_id > content.posts.id [delete: cascade]
+Ref comment_author: content.comments.author_id > content.authors.id [delete: set null]
+Ref comment_parent: content.comments.parent_id > content.comments.id [delete: set null]

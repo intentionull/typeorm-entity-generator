@@ -12,7 +12,7 @@ Tests assert independently chosen schema facts, not snapshots of parser output. 
 
 | Operation or feature | Boundary | Evidence |
 | --- | --- | --- |
-| Empty input and comments | Empty schema with implicit `public` namespace | `normalization has no shared schema state across concurrent or failed calls` |
+| Empty input, comments, and empty statements | Empty schema with implicit `public` namespace and no diagnostics | Empty-SQL full-result tests; empty-schema call-isolation regression |
 | `CREATE SCHEMA` | Explicit name; no authorization or embedded statements; reserved `pg_` namespaces rejected | Tenant fixture; `qualified same-name tables stay distinct and all builtin aliases normalize consistently` |
 | `CREATE TYPE ... AS ENUM` | Ordered, distinct labels; namespace must already exist; enum must precede its use | Tenant fixture; invalid enum/type cases |
 | `CREATE TABLE` | Ordinary persistent tables; physical quoted names preserved; no inheritance, partitioning, table options, or `IF NOT EXISTS` | Basic, tenant, and quoted fixtures; unsupported-feature cases |
@@ -28,6 +28,8 @@ Tests assert independently chosen schema facts, not snapshots of parser output. 
 | `ALTER TABLE ... ADD COLUMN` | Same column subset as `CREATE TABLE`; no `IF NOT EXISTS` | Selected-ALTER test; explicit-NULL regression |
 | `ALTER TABLE ... ADD CONSTRAINT` | Supported primary, unique, or foreign key | Selected-ALTER and source-order tests |
 | `ALTER TABLE ... ALTER COLUMN` | Set/drop default; set/drop `NOT NULL`; cannot remove identity/primary-key non-nullability or change identity defaults | Selected-ALTER test and invalid identity/primary-key cases |
+
+Validated zero-length input returns a fresh empty schema directly because the pinned scanner/parser reject it. Options, dialect, target, and input checks still apply. Whitespace, comments, empty statements, and all other nonempty input still go through the parser; malformed nonempty input is never treated as an empty schema.
 
 Source order is authoritative. Forward table, enum, and candidate-key references fail rather than being repaired. Columns in a newly created table are collected before its keys; candidate keys are resolved before same-table foreign keys. External schema objects are not assumed to exist. Unqualified table and enum names resolve to `public`; an explicit `SET search_path` is rejected.
 
@@ -70,6 +72,6 @@ npm run check
 
 A successful result is **structural normalization, not proof that SQL would execute on a PostgreSQL server**. Default values/casts, enum-member defaults, function availability, runtime data, server limits, collation, and catalog operator compatibility are not fully validated here. No generated TypeORM project, metadata, database catalog, NestJS consumer, or Aurora environment has been checked by this adapter suite. Database execution belongs in disposable integration tests, never ordinary generation.
 
-The separate internal [naming layer](naming.md) resolves entity classes, scalar properties, and basenames with declarative naming overrides and collision diagnostics. It does not change these physical schema facts. Direct DBML normalization, entity emission, the public library API, CLI, safe regeneration, and release packaging follow the [implementation plan](implementation-plan.md).
+The separate internal [naming layer](naming.md) resolves entity classes, scalar properties, and basenames with declarative naming overrides and collision diagnostics. It does not change these physical schema facts. The [direct DBML adapter](dbml-normalization.md) maps its supported subset into the same contract without SQL export. Entity emission, the public library API, CLI, safe regeneration, and release packaging follow the [implementation plan](implementation-plan.md).
 
 PostgreSQL reference pages for engine integration review: [character limits](https://www.postgresql.org/docs/18/datatype-character.html), [numeric limits](https://www.postgresql.org/docs/18/datatype-numeric.html), and [JSON comparison operators](https://www.postgresql.org/docs/18/functions-json.html). These references do not replace engine integration tests.

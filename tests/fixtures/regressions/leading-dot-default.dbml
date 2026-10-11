@@ -1,0 +1,4 @@
+Project fixture { database_type: 'PostgreSQL' }
+Table prices {
+  amount numeric [default: .125]
+}
