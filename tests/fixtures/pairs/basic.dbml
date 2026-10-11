@@ -1,0 +1,12 @@
+Project basic {
+  database_type: 'PostgreSQL'
+}
+
+Table public.accounts {
+  id integer [pk]
+  email varchar(255) [not null, unique]
+  enabled boolean [default: true]
+  balance numeric(12,2) [not null, default: 0]
+  nickname text
+  created_at timestamp [default: `now()`]
+}

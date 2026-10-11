@@ -1,0 +1,31 @@
+Project tenant {
+  database_type: 'PostgreSQL'
+}
+
+Enum tenant.order_status {
+  pending
+  complete
+  "customer's hold"
+}
+
+Table tenant.accounts {
+  tenant_id bigint [not null]
+  id bigint [not null]
+  indexes {
+    (tenant_id, id) [pk]
+  }
+}
+
+Table tenant.orders {
+  tenant_id bigint [not null]
+  id bigint [not null]
+  account_id bigint
+  order_code varchar(40) [not null]
+  status tenant.order_status [not null, default: 'pending']
+  indexes {
+    (tenant_id, id) [pk]
+    (tenant_id, order_code) [unique]
+  }
+}
+
+Ref: tenant.orders.(tenant_id, account_id) > tenant.accounts.(tenant_id, id) [delete: no action, update: cascade]

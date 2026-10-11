@@ -1,0 +1,10 @@
+Table accounts {
+  id integer [pk]
+}
+
+Table orders {
+  id integer [pk]
+  account_id integer
+}
+
+Ref: orders.account_id > accounts.missing_id

@@ -1,0 +1,7 @@
+Table accounts {
+  id integer [pk]
+}
+
+Table accounts {
+  id integer [pk]
+}

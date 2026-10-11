@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "parser": {
+    "name": "@dbml/core",
+    "version": "10.3.1",
+    "mode": "dbmlv2"
+  },
+  "sources": [
+    {
+      "id": "dbml",
+      "repository": "https://github.com/holistics/dbml",
+      "commit": "34108bb9346df5f22d5224549c106ff47ca931c8",
+      "license": "Apache-2.0",
+      "legalFiles": [
+        {
+          "path": "LICENSE",
+          "localPath": "upstream/dbml/legal/LICENSE",
+          "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/LICENSE",
+          "sha256": "45fc81806b99adde47bc9085247697788d3f786c6b5304021113d1f44d0e8486"
+        }
+      ]
+    },
+    {
+      "id": "php-parser",
+      "repository": "https://github.com/butschster/dbml-parser",
+      "commit": "f565a50099718be1c9ab9a63addf28033de31c90",
+      "license": "MIT",
+      "legalFiles": [
+        {
+          "path": "LICENSE",
+          "localPath": "upstream/php-parser/legal/LICENSE",
+          "url": "https://github.com/butschster/dbml-parser/blob/f565a50099718be1c9ab9a63addf28033de31c90/LICENSE",
+          "sha256": "e5ecec3b62672db87581d6fceae0c8f7e228513c4329a8d0fced25d8bbc689a7"
+        }
+      ]
+    },
+    {
+      "id": "go-parser",
+      "repository": "https://github.com/duythinht/dbml-go",
+      "commit": "b5659a82f71b047355a4799db0a9705e864009c2",
+      "license": "MIT",
+      "legalFiles": [
+        {
+          "path": "LICENSE",
+          "localPath": "upstream/go-parser/legal/LICENSE",
+          "url": "https://github.com/duythinht/dbml-go/blob/b5659a82f71b047355a4799db0a9705e864009c2/LICENSE",
+          "sha256": "54fc863a74cfef24c59ff9cec476cbf5986a3b85905e88ad108f1f97c5c97ba0"
+        }
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "id": "commerce",
+      "source": "dbml",
+      "path": "dbml-playground/public/examples/advanced/ecommerce.dbml",
+      "localPath": "upstream/dbml/commerce.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/dbml-playground/public/examples/advanced/ecommerce.dbml",
+      "sha256": "2b325ecec0734e7d5936735f2f34b71812ff07a92cbba9a65f387472781993a2",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "public.categories",
+            "public.order_items",
+            "public.orders",
+            "public.products",
+            "public.users"
+          ],
+          "enums": [
+            "public.order_status",
+            "public.product_status",
+            "public.user_status"
+          ],
+          "references": 5
+        }
+      }
+    },
+    {
+      "id": "simple",
+      "source": "dbml",
+      "path": "dbml-playground/public/examples/basic/simple-table.dbml",
+      "localPath": "upstream/dbml/simple.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/dbml-playground/public/examples/basic/simple-table.dbml",
+      "sha256": "1b80c6c2db701eaeed7994ee610c84a7dd2d90601e2cb810e90bab9c406a26bc",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "public.users"
+          ],
+          "enums": [],
+          "references": 0
+        }
+      }
+    },
+    {
+      "id": "general",
+      "source": "dbml",
+      "path": "packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/general_schema.in.dbml",
+      "localPath": "upstream/dbml/general.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/general_schema.in.dbml",
+      "sha256": "1cff8e7a524177e8a824149af708b3c671ec204fbd309077819113a824350eb0",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "public.countries",
+            "public.merchants",
+            "public.order_items",
+            "public.orders",
+            "public.products",
+            "public.users"
+          ],
+          "enums": [
+            "public.orders_status",
+            "public.product status"
+          ],
+          "references": 6
+        }
+      }
+    },
+    {
+      "id": "schemas",
+      "source": "dbml",
+      "path": "packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/multiple_schema.in.dbml",
+      "localPath": "upstream/dbml/schemas.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/multiple_schema.in.dbml",
+      "sha256": "a0298a5fe29a1a3ea6236ca0ebc5929b1af73c6dc505d9b77d31711acbd10723",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "ecommerce.users",
+            "public.products",
+            "public.users",
+            "schemaA.locations",
+            "schemaA.products"
+          ],
+          "enums": [
+            "public.gender",
+            "public.job_status",
+            "schemaB.gender"
+          ],
+          "references": 4
+        }
+      }
+    },
+    {
+      "id": "enums",
+      "source": "dbml",
+      "path": "packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/enum.in.dbml",
+      "localPath": "upstream/dbml/enums.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/enum.in.dbml",
+      "sha256": "2bd95e093629b031d60d15b06f0a133e4c590db0ade3341cde09890ecbc4b763",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "public.accounts"
+          ],
+          "enums": [
+            "Schema Name.User Role Enum",
+            "Schema Name.UserRoleEnum",
+            "SchemaName.UserRoleEnum",
+            "public.UserRoleEnum"
+          ],
+          "references": 0
+        }
+      }
+    },
+    {
+      "id": "many-to-many",
+      "source": "dbml",
+      "path": "packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/many_to_many_relationship.in.dbml",
+      "localPath": "upstream/dbml/many-to-many.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/many_to_many_relationship.in.dbml",
+      "sha256": "4060e19b7b1b8c13d8e642abb4c2036b59c1dddd94345b69fa330c93685228bd",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "A.a",
+            "B.b",
+            "C.c",
+            "D.d",
+            "E.e",
+            "G.g",
+            "public.t1",
+            "public.t1_t2",
+            "public.t2",
+            "schema.content_item",
+            "schema.footer_item",
+            "schema.image",
+            "schema1.customers",
+            "schema2.orders"
+          ],
+          "enums": [],
+          "references": 7
+        }
+      }
+    },
+    {
+      "id": "null-defaults",
+      "source": "dbml",
+      "path": "packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/null_defaults.in.dbml",
+      "localPath": "upstream/dbml/null-defaults.dbml",
+      "url": "https://github.com/holistics/dbml/blob/34108bb9346df5f22d5224549c106ff47ca931c8/packages/dbml-core/__tests__/examples/exporter/postgres_exporter/input/null_defaults.in.dbml",
+      "sha256": "aca8644671e56345b58eb0a955951a0b6d917eec72a100ab8c19455c40216540",
+      "modified": false,
+      "targetProfile": "postgres",
+      "expected": {
+        "outcome": "accept",
+        "summary": {
+          "tables": [
+            "public.users"
+          ],
+          "enums": [],
+          "references": 0
+        }
+      }
+    },
+    {
+      "id": "php-parser-invalid",
+      "source": "php-parser",
+      "path": "tests/schema.dbml",
+      "localPath": "upstream/php-parser/php-parser-invalid.dbml",
+      "url": "https://github.com/butschster/dbml-parser/blob/f565a50099718be1c9ab9a63addf28033de31c90/tests/schema.dbml",
+      "sha256": "f19b7fc0f0f762d728d8a008ca126042eeec1e54a1762759b3d58692cd5185be",
+      "modified": false,
+      "targetProfile": "mysql",
+      "expected": {
+        "outcome": "reject",
+        "messages": [
+          "A Ref can only contain one binary relationship",
+          "Table 'just_test' does not exist in Schema 'public'"
+        ]
+      }
+    },
+    {
+      "id": "go-parser-invalid",
+      "source": "go-parser",
+      "path": "test.dbml",
+      "localPath": "upstream/go-parser/go-parser-invalid.dbml",
+      "url": "https://github.com/duythinht/dbml-go/blob/b5659a82f71b047355a4799db0a9705e864009c2/test.dbml",
+      "sha256": "dde68167cda785f528d61911b421774514d23d46f15fb1f4301973441412be55",
+      "modified": false,
+      "targetProfile": "mysql",
+      "expected": {
+        "outcome": "reject",
+        "messages": [
+          "A Ref can only contain one binary relationship",
+          "Table 'just_test' does not exist in Schema 'public'",
+          "A column name must be an identifier or a quoted identifier"
+        ]
+      }
+    }
+  ]
+}

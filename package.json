@@ -1,0 +1,35 @@
+{
+  "name": "@intentionull/typeorm-entity-generator",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Database schema normalization and development checks; entity generation pending.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "check:types": "tsc -p tsconfig.json --noEmit",
+    "check:format": "biome format .",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "check:licenses": "node scripts/license-inventory.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs dist/tests/*.test.js",
+    "test:fixtures": "node --test tests/fixtures.test.mjs",
+    "test:docs": "node --test tests/documentation.test.mjs",
+    "test:tooling": "node --test tests/tooling.test.mjs",
+    "test:postgres": "npm run build && node --test dist/tests/postgres.test.js",
+    "test:names": "npm run build && node --test dist/tests/names.test.js",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check": "npm run check:format && npm run lint && npm run check:types && npm run check:docs && npm run check:licenses && npm test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@dbml/core": "10.3.1",
+    "@types/node": "24.19.2",
+    "libpg-query": "18.1.5",
+    "typescript": "7.0.2"
+  }
+}

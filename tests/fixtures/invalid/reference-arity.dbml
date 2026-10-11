@@ -1,0 +1,14 @@
+Table accounts {
+  tenant_id bigint
+  id bigint
+  indexes {
+    (tenant_id, id) [pk]
+  }
+}
+
+Table orders {
+  id bigint [pk]
+  account_id bigint
+}
+
+Ref: orders.account_id > accounts.(tenant_id, id)
