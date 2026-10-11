@@ -5,6 +5,11 @@ import { normalizePostgres } from '../src/adapters/postgres.js';
 import type { PostgresOptions, SchemaDocument } from '../src/schema/model.js';
 
 const options = { dialect: 'postgres', target: 'postgres' } as const;
+const emptyResult = {
+  ok: true,
+  schema: { version: 1, dialect: 'postgres', namespaces: ['public'], tables: [], enums: [] },
+  diagnostics: [],
+};
 async function normalize(sql: string): Promise<SchemaDocument> {
   const result = await normalizePostgres(sql, options);
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
@@ -272,6 +277,66 @@ test('normalization has no shared schema state across concurrent or failed calls
   await rejected('CREATE TABLE a(x int[]);', 'SQL_UNSUPPORTED');
   assert.deepEqual(await normalize(sql), results[0]);
   assert.deepEqual((await normalize('-- empty schema')).tables, []);
+});
+
+for (const [name, sql] of [
+  ['zero-length', ''],
+  ['space-only', ' '],
+  ['whitespace-only', '\t\r\n'],
+  ['line-comment-only', '-- comment\n'],
+  ['block-comment-only', '/* comment */'],
+  ['semicolon-only', ';'],
+  ['multiple-empty-statements', ';\n;'],
+] as const) {
+  test(`${name} SQL returns the complete empty schema without diagnostics`, async () => {
+    assert.deepEqual(await normalizePostgres(sql, options), emptyResult);
+  });
+}
+
+for (const [name, inputOptions, code] of [
+  ['missing options', undefined, 'SQL_DIALECT'],
+  ['null options', null, 'SQL_DIALECT'],
+  ['mismatched dialect', { ...options, dialect: 'mysql' }, 'SQL_DIALECT'],
+  ['mismatched target', { ...options, target: 'mysql' }, 'SQL_DIALECT'],
+  ['zero byte limit', { ...options, maxInputBytes: 0 }, 'SQL_OPTIONS'],
+  ['fractional byte limit', { ...options, maxInputBytes: 1.5 }, 'SQL_OPTIONS'],
+  ['oversized byte limit', { ...options, maxInputBytes: 8388609 }, 'SQL_OPTIONS'],
+  ['zero object limit', { ...options, maxObjects: 0 }, 'SQL_OPTIONS'],
+  ['nonfinite object limit', { ...options, maxObjects: Infinity }, 'SQL_OPTIONS'],
+  ['oversized object limit', { ...options, maxObjects: 50001 }, 'SQL_OPTIONS'],
+] as const) {
+  test(`zero-length SQL still rejects ${name}`, async () => {
+    const result = await normalizePostgres('', inputOptions as unknown as PostgresOptions);
+    assert.equal(result.ok, false);
+    assert.equal('schema' in result, false);
+    assert.equal(result.diagnostics[0]?.code, code);
+    assert.equal(result.diagnostics[0]?.severity, 'error');
+    assert.deepEqual(result.diagnostics[0]?.location, { offset: 0, line: 1, column: 1 });
+    assert.ok(result.diagnostics[0]?.message);
+  });
+}
+
+test('empty schemas remain isolated across concurrent, populated and failed calls', async () => {
+  const [first, second, populated] = await Promise.all([
+    normalize(''),
+    normalize(''),
+    normalize("CREATE TYPE state AS ENUM ('open'); CREATE TABLE tasks(state state);"),
+  ]);
+  assert.notStrictEqual(first, second);
+  assert.notStrictEqual(first.namespaces, second.namespaces);
+  assert.notStrictEqual(first.tables, second.tables);
+  assert.notStrictEqual(first.enums, second.enums);
+  first.namespaces.push('changed');
+  first.tables.push(...populated.tables);
+  first.enums.push(...populated.enums);
+  assert.deepEqual({ ok: true, schema: second, diagnostics: [] }, emptyResult);
+  await rejected('CREATE TABLE broken (', 'SQL_PARSE');
+  assert.deepEqual(await normalizePostgres('', options), emptyResult);
+});
+
+test('malformed nonempty SQL still returns parser diagnostics without a schema', async () => {
+  await rejected('SELECT FROM;', 'SQL_PARSE');
+  await rejected('/* unfinished', 'SQL_PARSER');
 });
 
 test('explicit NULL applies within a column definition, not to later ALTER constraints', async () => {

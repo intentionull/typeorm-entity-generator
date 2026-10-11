@@ -12,7 +12,7 @@ Tests assert independently chosen schema facts, not snapshots of parser output. 
 
 | Operation or feature | Boundary | Evidence |
 | --- | --- | --- |
-| Empty input and comments | Empty schema with implicit `public` namespace | `normalization has no shared schema state across concurrent or failed calls` |
+| Empty input, comments, and empty statements | Empty schema with implicit `public` namespace and no diagnostics | Empty-SQL full-result tests; empty-schema call-isolation regression |
 | `CREATE SCHEMA` | Explicit name; no authorization or embedded statements; reserved `pg_` namespaces rejected | Tenant fixture; `qualified same-name tables stay distinct and all builtin aliases normalize consistently` |
 | `CREATE TYPE ... AS ENUM` | Ordered, distinct labels; namespace must already exist; enum must precede its use | Tenant fixture; invalid enum/type cases |
 | `CREATE TABLE` | Ordinary persistent tables; physical quoted names preserved; no inheritance, partitioning, table options, or `IF NOT EXISTS` | Basic, tenant, and quoted fixtures; unsupported-feature cases |
@@ -28,6 +28,8 @@ Tests assert independently chosen schema facts, not snapshots of parser output. 
 | `ALTER TABLE ... ADD COLUMN` | Same column subset as `CREATE TABLE`; no `IF NOT EXISTS` | Selected-ALTER test; explicit-NULL regression |
 | `ALTER TABLE ... ADD CONSTRAINT` | Supported primary, unique, or foreign key | Selected-ALTER and source-order tests |
 | `ALTER TABLE ... ALTER COLUMN` | Set/drop default; set/drop `NOT NULL`; cannot remove identity/primary-key non-nullability or change identity defaults | Selected-ALTER test and invalid identity/primary-key cases |
+
+Validated zero-length input returns a fresh empty schema directly because the pinned scanner/parser reject it. Options, dialect, target, and input checks still apply. Whitespace, comments, empty statements, and all other nonempty input still go through the parser; malformed nonempty input is never treated as an empty schema.
 
 Source order is authoritative. Forward table, enum, and candidate-key references fail rather than being repaired. Columns in a newly created table are collected before its keys; candidate keys are resolved before same-table foreign keys. External schema objects are not assumed to exist. Unqualified table and enum names resolve to `public`; an explicit `SET search_path` is rejected.
 
