@@ -66,3 +66,11 @@ Run `npm run check:docs` for the dependency-free, read-only repository scan, or 
 - The intended npm package is public. A proposed package name is not proof that its namespace is owned or available.
 - Keep secrets, input dumps, connection strings, and customer schema information out of the repository and package tarball.
 - Commits, pushes, publishing, releases, deployments, and service restarts require an explicit request in the current conversation. Repository documentation does not authorize these actions.
+
+## Review and maintenance
+
+- Submit changes through a pull request targeting `main`. Use the pull request template to describe scope, compatibility, validation results, and known limitations.
+- [CODEOWNERS](.github/CODEOWNERS) assigns all paths, including repository controls, to `@intentionull`. Default-branch rules require one approval with code-owner review, resolved review threads, and up-to-date passing Node 24/26 checks. Stale approvals are dismissed after new commits.
+- Merges use squash commits and linear history. Force pushes and deletion of `main` are blocked. The repository owner has an explicit bypass for exceptional maintenance; it is not the normal contributor workflow. GitHub does not allow self-approval, so an owner-authored pull request needs another eligible code owner or an explicit owner bypass.
+- [Dependabot](.github/dependabot.yml) checks npm dependencies and pinned GitHub Actions weekly. Review each update against schema regressions and dependency license metadata. Preserve exact dependency versions and full-commit action pins. Major changes require explicit compatibility review; no dependency updates are automatically merged.
+- Follow the [security policy](SECURITY.md) for private vulnerability reports. Do not include sensitive schema data or exploit details in public issues or pull requests.

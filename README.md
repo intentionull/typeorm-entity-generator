@@ -89,3 +89,9 @@ File generation must not execute input SQL, change a database, or overwrite unre
 The intended distribution is a **public npm package under the MIT license**. `@intentionull/typeorm-entity-generator` is the recommended candidate name, subject to npm account and scope ownership checks. The unscoped name has an unpublished-package record; its availability is not confirmed.
 
 [MIT](LICENSE), copyright 2026 intentionull. Third-party dependencies retain their own licenses.
+
+## Contributing and security
+
+See [Contributing](CONTRIBUTING.md) for the contributor gate, review requirements,
+and dependency maintenance. Report suspected vulnerabilities privately using the
+[security policy](SECURITY.md), not a public issue.
