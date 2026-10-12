@@ -21,6 +21,18 @@ jobs:
       fail-fast: false
       matrix:
         node: ['24', '26']
+    services:
+      postgres:
+        image: postgres:18.4@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - '127.0.0.1:5432:5432'
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -44,3 +56,10 @@ jobs:
 
       - name: Run contributor gate
         run: npm run check
+
+      - name: Compare disposable PostgreSQL catalogs
+        run: npm run test:catalog
+        env:
+          SCHEMA_TEST_HOST: 127.0.0.1
+          SCHEMA_TEST_PORT: '5432'
+          SCHEMA_TEST_USER: postgres

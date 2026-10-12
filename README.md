@@ -2,7 +2,7 @@
 
 Generate TypeORM entity files from database schemas, preserving names, column types, keys, and relationships.
 
-**Status:** development tooling, parser fixtures, internal PostgreSQL SQL and direct DBML normalization adapters, and pure entity/column naming with declarative overrides are implemented for their documented subsets. Entity generation, the public library API, and CLI are not implemented; the package remains private and unpublished. Generation commands below describe the proposed interface, not commands that work today.
+**Status:** development tooling, parser fixtures, internal PostgreSQL SQL and direct DBML normalization, pure naming, and a bounded PostgreSQL entity emitter are implemented. The emitter returns files in memory; it does not write them. The public library API, CLI, and safe writer are not implemented. The package remains private and unpublished. Generation commands below describe the proposed interface, not commands that work today.
 
 ## Fixture checks
 
@@ -15,11 +15,11 @@ npm run test:fixtures
 
 Use Node.js **24.11.0 or newer**. Node 24 LTS is the development default; `.nvmrc` selects its latest available patch for `nvm install` and `nvm use`. Node 26 is the current-release verification target. Node 22 is no longer a supported project target. See the [fixture corpus guide](tests/fixtures/README.md) for provenance, licensing, coverage, and limitations.
 
-The [CI workflow](.github/workflows/ci.yml) runs on pushes, pull requests, and manual dispatch, using the latest available patches of Node 24 and 26 on Ubuntu. Each lane installs locked dependencies with engine requirements enforced and dependency lifecycle scripts disabled, then runs `npm run check`. CI checks formatting, lint, strict TypeScript, documentation/vocabulary, license metadata, parser fixtures, normalization, and tooling regression tests. It does not establish generator, TypeORM, NestJS, or database compatibility.
+The [CI workflow](.github/workflows/ci.yml) runs on pushes, pull requests, and manual dispatch, using the latest available patches of Node 24 and 26 on Ubuntu. Each lane installs locked dependencies with engine requirements enforced and dependency lifecycle scripts disabled, then runs `npm run check` and separate disposable PostgreSQL catalog checks. Tests compile and execute strict ESM consumers against TypeORM 1.1.2, inspect independent metadata expectations, and compare selected physical catalog facts against PostgreSQL 18.4. See the [emission profile](docs/postgres-emission.md) for the exact evidence and exclusions. These checks do not establish NestJS, persistence, Aurora, or Data API compatibility.
 
 ## Repository checks
 
-Run `npm run check` for the complete contributor gate. See the [toolchain guide](docs/toolchain.md) for exact versions, commands, and license boundaries, the [PostgreSQL support table](docs/postgres-normalization.md) and [DBML support table](docs/dbml-normalization.md) for implemented subsets, and the [naming guide](docs/naming.md) for default conversion, overrides, collision diagnostics, and tests.
+Run `npm run check` for the database-free contributor gate, and `npm run test:catalog` against disposable local PostgreSQL for the integration gate. See the [toolchain guide](docs/toolchain.md) for commands and license boundaries, the [PostgreSQL support table](docs/postgres-normalization.md), [DBML support table](docs/dbml-normalization.md), [naming guide](docs/naming.md), and [emission profile](docs/postgres-emission.md) for supported behavior and exclusions.
 
 `npm run check:docs` needs no installed dependencies and never edits files. It checks local Markdown links, code-fence balance, and restricted terminology in repository text and filenames. Required legal notices are exempt; pinned upstream source stays unchanged. See the [check guide](docs/documentation-check.md) for syntax coverage, exclusions, and limitations. This static check does not prove documentation accuracy or execute examples.
 

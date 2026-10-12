@@ -63,6 +63,20 @@ test('license inventory checks metadata without rewriting the lockfile', (t) => 
   assert.equal(readFileSync(join(root, 'package-lock.json'), 'utf8'), lock);
 });
 
+for (const license of ['ISC', '0BSD', 'BlueOak-1.0.0']) {
+  test(`license inventory recognizes reviewed ${license} dependency metadata without rewriting it`, (t) => {
+    const root = checkout(t, 'license-inventory.mjs');
+    const lock = JSON.stringify({
+      packages: { 'node_modules/example': { version: '1.0.0', license } },
+    });
+    writeFileSync(join(root, 'package-lock.json'), lock);
+    const result = run(root, 'license-inventory.mjs');
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(result.stdout.includes(`example\t1.0.0\t${license}`));
+    assert.equal(readFileSync(join(root, 'package-lock.json'), 'utf8'), lock);
+  });
+}
+
 for (const license of [undefined, 'GPL-3.0-only', 'UNKNOWN']) {
   test(`license inventory requires review for ${license ?? 'missing'} metadata`, (t) => {
     const root = checkout(t, 'license-inventory.mjs');
