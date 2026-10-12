@@ -4,7 +4,7 @@
 
 Build a deterministic TypeORM entity generator with a command-line interface and a typed library API. Keep parser evaluation, implemented features, and planned features clearly separated in documentation.
 
-Follow the [implementation plan](docs/implementation-plan.md) for milestone order and acceptance criteria. The [fixture corpus guide](tests/fixtures/README.md) documents parser checks and provenance. Strict TypeScript/ESM tooling, formatting/lint, documentation and license-metadata checks, and compiled PostgreSQL SQL/DBML normalization and naming tests are implemented. Entity generation remains pending. See the [toolchain guide](docs/toolchain.md) for exact versions, commands, and license boundaries.
+Follow the [implementation plan](docs/implementation-plan.md) for milestone order and acceptance criteria. The [fixture corpus guide](tests/fixtures/README.md) documents parser checks and provenance. Normalization, naming, and bounded in-memory PostgreSQL emission are implemented. Read the [emission profile](docs/postgres-emission.md) before extending generation; the CLI, public API and safe writer remain pending. See the [toolchain guide](docs/toolchain.md) for commands and license boundaries.
 
 ## Continuous integration
 
@@ -21,7 +21,7 @@ npm run check
 
 Keep pull-request checks read-only. The workflow uses full commit pins for external actions, does not persist checkout credentials, and disables automatic dependency caching. It needs no npm publishing or cloud secrets and has no publishing or deployment steps. When updating an action pin, verify the release and full commit in the official action repository; keep the adjacent version comment accurate.
 
-Passing these jobs verifies formatting, focused lint, strict type/build checks, documentation/vocabulary, license metadata, fixture integrity, normalization, and tooling regressions. Generated-project consumers and database integration checks remain pending. `npm run check` includes a clean build; only its static checks are read-only. Use `npm run format` to apply formatting, then review the result. Workflow changes can be checked locally with `actionlint .github/workflows/ci.yml`; this optional tool is not a package dependency.
+Both jobs check formatting, lint, strict types, documentation/vocabulary, license metadata, fixtures, normalization, naming, strict generated consumers and independent TypeORM metadata. Each also runs `npm run test:catalog` against a pinned disposable PostgreSQL service. Catalog tests execute only controlled test SQL and create/drop uniquely named test databases; the conversion pipeline never connects or executes SQL. `npm run check` includes a clean build; only its static checks are read-only. Use `npm run format` and review the result. Workflow changes can be checked locally with `actionlint .github/workflows/ci.yml`; this optional tool is not a package dependency.
 
 ## Documentation checks
 
@@ -54,6 +54,7 @@ Run `npm run check:docs` for the dependency-free, read-only repository scan, or 
 - Use `npm run test:postgres` for compiled normalization tests. Read the [PostgreSQL support table](docs/postgres-normalization.md) before extending the adapter; grammar acceptance is not supported semantics.
 - Use `npm run test:dbml` for direct DBML normalization tests. Read the [DBML support table](docs/dbml-normalization.md); preserve exact numeric defaults, reference direction, and explicit uniqueness without SQL export or invented physical constraints.
 - Use `npm run test:names` for compiled naming/override tests. Read the [naming rules](docs/naming.md) before changing conversion or collision behavior; keep generated mappings separate from physical schema facts.
+- Use `npm run test:emission` for file-plan, strict ESM consumer and metadata tests. Run `npm run test:catalog` only against disposable local PostgreSQL, following the [integration instructions](docs/postgres-emission.md#catalog-tests). Neither command establishes persistence or cloud compatibility.
 - Keep ordering, file names, and output bytes deterministic. Do not embed timestamps or machine-specific paths.
 - Keep changes focused; do not add a new input adapter until its supported subset and failure behavior are tested.
 - Use the current supported TypeORM APIs. Do not claim compatibility with a version that has not been checked.

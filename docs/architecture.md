@@ -110,7 +110,7 @@ Ignore project/table/column notes by default. Any future note-to-comment export 
 
 Use conservative, deterministic name conversion with explicit overrides. Avoid default singularization: English inflection can change valid names unexpectedly. Check reserved words, invalid identifiers, case-insensitive filename conflicts, normalized-name collisions, and collisions between scalar and relation properties.
 
-The internal [naming layer](naming.md) currently resolves classes, scalar properties, and basenames with explicit collision diagnostics while preserving physical schema facts. Relation properties, enum symbols, and emitter import/registry symbol conflicts remain with the emission milestone; they are not checked by the scalar naming layer.
+The internal [naming layer](naming.md) currently resolves classes, scalar properties, and basenames with explicit collision diagnostics while preserving physical schema facts. Relation properties, enum symbols, and emitter import/registry symbol conflicts are handled by the [emission profile](postgres-emission.md); they are not checked by the scalar naming layer.
 
 Build relationships from declared foreign keys, not naming conventions:
 

@@ -78,13 +78,14 @@ node --test --test-name-pattern='seed=5eed1234 case=3' dist/tests/dbml-generated
 
 When a generated test fails, retain its seed and full input, then reduce it to a committed regression input when practical. Keep a handwritten expected result or rejection; do not update the oracle from adapter output. The current reduced failures and their origins are recorded in the [regression README](../tests/fixtures/regressions/README.md).
 
-## Pending end-to-end proof
+## Emission evidence and remaining integration proof
 
-No emitter exists yet. Normalization tests therefore cannot establish TypeORM, NestJS, PostgreSQL execution, Aurora deployment, or Data API compatibility. The [M3 acceptance gates](implementation-plan.md#m3--typeorm-emission-and-postgresql-proof) must:
+Normalization tests alone cannot establish generated-consumer or database compatibility. The [bounded PostgreSQL emitter](postgres-emission.md) now provides additional, separately scoped M3 evidence:
 
-1. Compile generated entities/registry in a fresh strict consumer without `skipLibCheck` and execute under the declared module format.
-2. Inspect TypeORM metadata against handwritten facts for these fixtures, including composite nullable keys, cycles, cross-schema names, multiple references, defaults and explicit junctions. Do not infer eager loading or persistence cascades.
-3. Use isolated disposable PostgreSQL databases to compare normalized source catalog facts and generated catalog facts, with explicit exclusions for externally managed features. Only controlled test setup executes SQL; generation stays memory-only.
-4. Exercise a separate minimal NestJS consumer and actual persistence for the M5 integration claim. Aurora/native-engine deployment and Data API transport/value behavior require their own isolated infrastructure and evidence.
+1. Generated entities/registry compile in fresh strict ESM/NodeNext consumers without `skipLibCheck` and import in separate Node processes. Additional compile-time assertions cover scalar/nullable relationship types and empty registries.
+2. TypeORM metadata is checked against complete handwritten application facts, including composite nullable keys, cycles, cross-schema names, multiple references, defaults and explicit junctions. Relation join pairs/types are checked independently; eager/lazy loading and persistence cascades stay disabled.
+3. Isolated disposable PostgreSQL source/generated catalogs are compared for all five applications, the three SQL/DBML pairs and focused SQL. Application source DDL comes from handwritten expectations, not parsed input or generated entities. The [catalog guide](postgres-emission.md#catalog-tests) states the implicit constraint-name exclusion and externally provisioned namespace boundary. Only controlled test setup executes SQL; generation stays memory-only.
+
+A separate minimal NestJS consumer and actual persistence remain required for the M5 integration claim. Aurora/native-engine deployment and Data API transport/value behavior need their own isolated infrastructure and evidence. No hosted CI result or formal M3 acceptance is implied by adding these tests.
 
 A feature row is evidence at its stated layer, not a formal milestone acceptance or publication gate.

@@ -68,4 +68,4 @@ Run `npm run test:names` for the [compiled naming tests](../tests/names.test.ts)
 
 ## Boundaries
 
-Enum symbols, relation properties, scalar/relation property collisions, emitter import/registry symbol conflicts, and final generated-project compilation belong to the emission milestone. This layer neither creates those names nor claims they are checked. It does not write files or make regeneration safe. The [direct DBML adapter](dbml-normalization.md) can supply the same physical contract. Entity emission, the public library API, CLI, and release packaging remain in the [implementation plan](implementation-plan.md).
+Enum symbols, relation properties, scalar/relation property collisions, emitter import/registry symbol conflicts, and final generated-project compilation belong to the [emission profile](postgres-emission.md). This naming layer neither creates those names nor claims they are checked. It does not write files or make regeneration safe. The [direct DBML adapter](dbml-normalization.md) supplies the same physical contract. The public library API, CLI, safe writer and release packaging remain in the [implementation plan](implementation-plan.md).

@@ -2,7 +2,7 @@
   "name": "@intentionull/typeorm-entity-generator",
   "version": "0.0.0",
   "private": true,
-  "description": "Database schema normalization and development checks; entity generation pending.",
+  "description": "Database schema normalization and deterministic PostgreSQL entity file planning.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -23,6 +23,8 @@
     "test:postgres": "npm run build && node --test dist/tests/postgres.test.js",
     "test:names": "npm run build && node --test dist/tests/names.test.js",
     "test:dbml": "npm run build && node --test dist/tests/dbml*.test.js",
+    "test:emission": "npm run build && node --test dist/tests/emission*.test.js",
+    "test:catalog": "npm run build && node --test dist/tests/emission.catalog.js",
     "check:docs": "node scripts/check-docs.mjs",
     "check": "npm run check:format && npm run lint && npm run check:types && npm run check:docs && npm run check:licenses && npm test"
   },
@@ -31,6 +33,9 @@
     "@dbml/core": "10.3.1",
     "@types/node": "24.19.2",
     "libpg-query": "18.1.5",
+    "pg": "8.23.1",
+    "ts-morph": "28.0.0",
+    "typeorm": "1.1.2",
     "typescript": "7.0.2"
   }
 }
